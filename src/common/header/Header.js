@@ -6,7 +6,7 @@ import logo from '../../assets/logo.jpeg'
 import {Button, Tabs, Tab, Box} from '@material-ui/core';
 import {Typography} from "@material-ui/core";
 import PropTypes from 'prop-types';
-import { FormControl, Input, InputLabel, FormHelperText } from '@material-ui/core';
+import { FormControl, TextField, Input, InputLabel, FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useLoginStyles = makeStyles((theme) => ({
@@ -68,20 +68,93 @@ function a11yProps(index) {
 }
 
 const Header = ({baseUrl}) => {
-    const [headerBtnText, setHeaderBtnText] = useState('Login');
+    const [accessToken, setAccessToken] = useState('');
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
     const loginClasses = useLoginStyles();
+    const [loginForm, setLoginForm] = useState({
+        'email':'',
+        'password':''
+    })
+    const [emailError, setEmailError] = useState(false);
+    const [emailErrorText, setEmailErrorText] = useState('');
+    const [passwordError, setPasswordError] = useState(false);
+    const [passwordErrorText, setPasswordErrorText] = useState('');
 
     const handleOpenModal = () => {
         setLoginModalIsOpen(true);
+        setEmailError(false);
+        setPasswordError(false);
+        setEmailErrorText('');
+        setPasswordErrorText('');
     };
 
-    const handleLogin = () => {
-        alert("talwinder");
+    function validateLogin(email, password) {
+        let emailErrorCheck = false;
+        let passwordErrorCheck = false;
+        if (email === '') {
+            setEmailError(true);
+            setEmailErrorText("Please fill out this field");
+            emailErrorCheck = true;
+        }
+
+        if (password === '') {
+            setPasswordError(true);
+            setPasswordErrorText("Please fill out this field");
+            passwordErrorCheck = true;
+        }
+
+        if (emailErrorCheck === false) {
+            let validEmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+            if (!email.match(validEmailRegex)) {
+                setEmailError(true);
+                setEmailErrorText("Enter valid Email");
+            }
+        }
+        return {emailErrorCheck, passwordErrorCheck};
     }
 
-    const handleLogout = () => {
-        alert('Logout');
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        const {email,password} = loginForm;
+        let {emailErrorCheck, passwordErrorCheck} = validateLogin(email, password);
+
+        if(emailErrorCheck === false && passwordErrorCheck === false) {
+            let stringToEncode = email + ':' + password;
+            let basicAuth = window.btoa(stringToEncode);
+            const rawResponse = await fetch(baseUrl + "auth/login", {
+                method:'POST',
+                headers:{
+                    'Authorization': `Basic ${basicAuth}`
+                },
+            });
+            const response = await rawResponse.json();
+            if (rawResponse.ok) {
+                setAccessToken(response.accessToken);
+                setLoginForm({
+                    email: '',
+                    password: ''
+                });
+                closeModal();
+            } else {
+                setEmailError(true);
+                setEmailErrorText(response.message);
+            }
+
+        }
+
+    }
+
+    const handleLogout = async () => {
+        const rawResponse = await fetch(baseUrl + "auth/logout", {
+            method:'POST',
+            headers:{
+                'Authorization': `Bearer ${accessToken}`
+            },
+        });
+
+        if (rawResponse.ok) {
+            setAccessToken('');
+        }
     }
 
     function afterOpenModal() {
@@ -93,7 +166,16 @@ const Header = ({baseUrl}) => {
         setLoginModalIsOpen(false);
     }
 
+    const loginInputChangedHandler = (e) => {
+        const state = loginForm;
+        state[e.target.name] = e.target.value;
+
+        setLoginForm({...state});
+
+    }
+
     const [value, setValue] = React.useState(0);
+
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -103,18 +185,16 @@ const Header = ({baseUrl}) => {
         <div className='logo-panel'><img src={logo} alt='logo' className='logo-img'/></div>
         <div className='title-panel'><h2>Doctor Finder </h2></div>
         <div className='btn-panel'>
-            <Button
-                variant="contained" color="primary"
-                onClick={handleOpenModal}
-            >
-                {headerBtnText}
-            </Button>
-            <Button
-                variant="contained" color="secondary"
-                onClick={handleLogout}
-            >
-                {headerBtnText}
-            </Button>
+            { accessToken === '' ?
+                <Button
+                    variant="contained" color="primary"
+                    onClick={handleOpenModal}
+                > Login </Button> :
+                <Button
+                    variant="contained" color="secondary"
+                    onClick={handleLogout}
+                > Logout </Button>}
+
         </div>
         <Modal
             isOpen={loginModalIsOpen}
@@ -135,13 +215,27 @@ const Header = ({baseUrl}) => {
                     <form className={loginClasses.root}>
                         <FormControl>
                             <InputLabel htmlFor="login-email">Email address</InputLabel>
-                            <Input id="login-email" aria-describedby="email" />
-                            {/*<FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>*/}
+                            <Input
+                                id="login-email"
+                                name="email"
+                                aria-describedby="email"
+                                onChange={loginInputChangedHandler}
+                                error={emailError == true}
+                                /*value={email}*/
+                            />
+                            <FormHelperText id="email-error-text">{emailErrorText}</FormHelperText>
                         </FormControl>
                         <FormControl>
                             <InputLabel htmlFor="login-password">Password</InputLabel>
-                            <Input id="login-password" aria-describedby="password" />
-                            {/*<FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>*/}
+                            <Input
+                                id="login-password"
+                                name="password"
+                                type="password"
+                                aria-describedby="password"
+                                onChange={loginInputChangedHandler}
+                                error={passwordError == true}
+                            />
+                            <FormHelperText id="my-helper-text">{passwordErrorText}</FormHelperText>
                         </FormControl>
                         <Button
                             id="login-btn"
