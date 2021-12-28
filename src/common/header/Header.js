@@ -108,17 +108,18 @@ const Header = ({baseUrl}) => {
             if (!email.match(validEmailRegex)) {
                 setEmailError(true);
                 setEmailErrorText("Enter valid Email");
+                emailErrorCheck = true;
             }
         }
-        return {emailErrorCheck, passwordErrorCheck};
+        return (emailErrorCheck === true || passwordErrorCheck === true) ? false : true;
     }
 
     const handleLogin = async (e) => {
         e.preventDefault();
         const {email,password} = loginForm;
-        let {emailErrorCheck, passwordErrorCheck} = validateLogin(email, password);
+        let isValid = validateLogin(email, password);
 
-        if(emailErrorCheck === false && passwordErrorCheck === false) {
+        if(isValid === true) {
             let stringToEncode = email + ':' + password;
             let basicAuth = window.btoa(stringToEncode);
             const rawResponse = await fetch(baseUrl + "auth/login", {
