@@ -41,3 +41,28 @@
 .modal-action-btn {
     margin-top: 20px !important;
 }
+
+.floating-error {
+    background: #423f3f;
+    width: fit-content;
+    padding: 15px;
+    border-radius: 7px;
+    position: absolute;
+    top: 48px;
+    z-index: 1000;
+    opacity: 100%;
+    color: white !important;
+    display: none;
+}
+
+.MuiFormHelperText-root {
+    color: red !important;
+}
+
+.hide-message {
+    display: none !important;
+}
+
+.show-message {
+    display: flex !important;
+}
