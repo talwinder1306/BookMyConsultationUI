@@ -143,9 +143,6 @@ const Header = ({baseUrl}) => {
             'regPasswordErrorText': '',
             'mobileErrorText': ''
         });
-        const msg = document.getElementById("reg-alert");
-        msg.classList.add("hide-message");
-        msg.classList.remove("show-message");
     };
 
     function showEmptyError(form) {
@@ -342,7 +339,6 @@ const Header = ({baseUrl}) => {
 
     function afterOpenModal() {
         // references are now sync'd and can be accessed.
-        //subtitle.style.color = '#f00';
     }
 
     function closeModal() {
