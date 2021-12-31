@@ -1,0 +1,18 @@
+.doctor-list-container {
+    text-align: center;
+}
+
+.green-btn {
+    background-color: green !important;
+    color: white !important;
+}
+
+.star-icon {
+    color: #acacac;
+    font-size: 1em;
+}
+
+.star-selected {
+    color: #ffc100;
+    font-size: 1em;
+}

@@ -2,13 +2,13 @@ import React, {useState} from "react";
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import './Header.css';
+import '../common.css';
 import logo from '../../assets/logo.jpeg'
 import {Button, Tabs, Tab, Box} from '@material-ui/core';
-import {Typography} from "@material-ui/core";
-import PropTypes from 'prop-types';
 import { FormControl, Input, InputLabel, FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
+import {TabPanel, a11yProps} from "../tabPanel/TabPanel";
 
 const useLoginStyles = makeStyles((theme) => ({
     root: {
@@ -34,39 +34,6 @@ const loginModalCustomStyles = {
         padding: '0px',
     },
 };
-
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
-
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
 
 const Header = ({baseUrl}) => {
     const [accessToken, setAccessToken] = useState('');
@@ -161,7 +128,7 @@ const Header = ({baseUrl}) => {
     }
 
     function validateLogin(loginForm) {
-        const {email, password} = loginForm;
+        const email = loginForm['email'];
 
         let errorFound = showEmptyError(loginForm);
         let isValidEmail = validateEmail(email);
