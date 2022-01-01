@@ -3,8 +3,9 @@ import Header from "../../common/header/Header";
 import {TabPanel, a11yProps} from "../../common/tabPanel/TabPanel";
 import {Box, Tab, Tabs} from "@material-ui/core";
 import DoctorList from "../doctorList/DoctorList";
+import Appointment from "../appointment/Appointment"
 
-const Home = ({baseUrl}) => {
+const Home = ({baseUrl, accessToken, setAccessToken, loggedInUserId, setLoggedInUserId}) => {
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -12,7 +13,8 @@ const Home = ({baseUrl}) => {
     };
 
     return <React.Fragment>
-        <Header baseUrl={baseUrl} />
+        <Header baseUrl={baseUrl} accessToken={accessToken} setAccessToken={setAccessToken}
+                loggedInUserId={loggedInUserId} setLoggedInUserId={setLoggedInUserId} />
         <div className="home-container">
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" indicatorColor="primary"
@@ -22,10 +24,10 @@ const Home = ({baseUrl}) => {
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-                <DoctorList baseUrl={baseUrl} />
+                <DoctorList baseUrl={baseUrl} accessToken={accessToken} loggedInUserId={loggedInUserId}/>
             </TabPanel>
             <TabPanel value={value} index={1}>
-                Item two
+                <Appointment baseUrl={baseUrl} accessToken={accessToken} loggedInUserId={loggedInUserId}/>
             </TabPanel>
         </div>
     </React.Fragment>;

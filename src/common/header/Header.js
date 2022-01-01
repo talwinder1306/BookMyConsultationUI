@@ -35,8 +35,7 @@ const loginModalCustomStyles = {
     },
 };
 
-const Header = ({baseUrl}) => {
-    const [accessToken, setAccessToken] = useState('');
+const Header = ({baseUrl, accessToken, setAccessToken, loggedInUserId, setLoggedInUserId}) => {
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
     const loginClasses = useLoginStyles();
     const [loginForm, setLoginForm] = useState({
@@ -229,6 +228,7 @@ const Header = ({baseUrl}) => {
             const {rawResponse, response} = await fetchLogin(email, password);
             if (rawResponse.ok) {
                 setAccessToken(response.accessToken);
+                setLoggedInUserId(email);
                 setLoginForm({
                     email: '',
                     password: ''
@@ -259,6 +259,7 @@ const Header = ({baseUrl}) => {
                 const {rawResponse, response} = await fetchLogin(registerForm.regEmail, registerForm.regPassword);
                 if (rawResponse.ok) {
                     setAccessToken(response.accessToken);
+                    setLoggedInUserId(response.emailId);
                     setLoginForm({
                         email: '',
                         password: ''
@@ -301,6 +302,7 @@ const Header = ({baseUrl}) => {
 
         if (rawResponse.ok) {
             setAccessToken('');
+            setLoggedInUserId('');
         }
     }
 

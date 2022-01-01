@@ -6,7 +6,8 @@ import './DoctorList.css';
 import {Paper, Typography, CardActions, Button, CardContent} from "@material-ui/core";
 import StarIcon from '@material-ui/icons/Star';
 import Modal from 'react-modal';
-
+import BookAppointment from "./BookAppointment";
+import DoctorDetails from "./DoctorDetails";
 
 const selectStyles = makeStyles((theme) => ({
     formControl: {
@@ -37,19 +38,6 @@ const useStyles = makeStyles({
     }
 });
 
-const useModalStyles = makeStyles((theme) => ({
-    root: {
-        '& .MuiTextField-root': {
-            margin: theme.spacing(1),
-            width: 200,
-        },
-        '& .MuiFormControl-root': {
-            display: 'flex',
-            marginBottom: '15px',
-        },
-    },
-}));
-
 const modalCustomStyles = {
     content: {
         top: '50%',
@@ -58,15 +46,36 @@ const modalCustomStyles = {
         bottom: 'auto',
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
-        padding: '0px',
-    },
+        padding: '0px'
+    }
 };
 
-const DoctorList = ({baseUrl}) => {
+const bookAppModalStyles = {
+    content: {
+        ...modalCustomStyles.content,
+        width: '50%',
+    }
+}
+const DoctorList = ({baseUrl, accessToken, loggedInUserId}) => {
     const selectClasses = selectStyles();
     const classes = useStyles();
-    const [bookAppointmentModalIsOpen, setBookAppointmentModalIsOpen] = useState(false);
-    const modalClasses = useModalStyles();
+    const [bookAppointmentModal, setBookAppointmentModal] = useState({
+        'isOpen': false,
+        'doctorName': '',
+        'doctorId': ''
+    });
+    const [viewDetailsModal, setViewDetailsModal] = useState({
+        'isOpen': false,
+        'doctorId': '',
+        'doctorName': '',
+        'totalYearsOfExp': 0,
+        'speciality': '',
+        'dob': '',
+        'city': '',
+        'emailId': '',
+        'mobile': '',
+        'rating': 0.0
+    });
     const [speciality, setSpeciality] = useState('');
     const [allSpecialities, setAllSpecialities] = useState([]);
     const [allDoctors, setAllDoctors] = useState([]);
@@ -92,6 +101,7 @@ const DoctorList = ({baseUrl}) => {
     }
 
     useEffect(() => {
+        console.log(bookAppModalStyles);
         fetchAllSpecialities();
         fetchDoctorsBySpeciality("");
     }, []);
@@ -101,8 +111,55 @@ const DoctorList = ({baseUrl}) => {
         fetchDoctorsBySpeciality(event.target.value);
     };
 
-    const handleOpenBookAppointmentModal = () => {
-        setBookAppointmentModalIsOpen(true);
+    const handleOpenBookAppointmentModal = (name, id) => {
+        console.log(name);
+        console.log(id);
+        const modalState = bookAppointmentModal;
+        modalState['isOpen'] = true;
+        modalState['doctorName'] = name;
+        modalState['doctorId'] = id;
+        setBookAppointmentModal({...modalState});
+    }
+
+    const closeBookAppointmentModal = () => {
+        const modalState = bookAppointmentModal;
+        modalState['isOpen'] = false;
+        modalState['doctorName'] = '';
+        modalState['doctorId'] = '';
+        setBookAppointmentModal({...modalState});
+    }
+
+    const handleOpenViewDetailsModal = (doctorObj) => {
+        const modalState = {
+            'isOpen': true,
+            'doctorId': `${doctorObj.id}`,
+            'doctorName': `${doctorObj.firstName} ${doctorObj.lastName}`,
+            'totalYearsOfExp': doctorObj.totalYearsOfExp,
+            'speciality': `${doctorObj.speciality}`,
+            'dob': `${doctorObj.dob}`,
+            'city': `${doctorObj.address.city}`,
+            'emailId': `${doctorObj.emailId}`,
+            'mobile': `${doctorObj.mobile}`,
+            'rating': doctorObj.rating
+        };
+        console.log(modalState);
+        setViewDetailsModal({...modalState});
+    }
+
+    const closeViewDetailsModal = () => {
+        setViewDetailsModal({
+            'isOpen': false,
+            'doctorId': '',
+            'doctorName': '',
+            'totalYearsOfExp': 0,
+            'speciality': '',
+            'dob': '',
+            'city': '',
+            'emailId': '',
+            'mobile': '',
+            'rating': 0.0
+        });
+
     }
 
     return <div className="doctor-list-container">
@@ -128,11 +185,14 @@ const DoctorList = ({baseUrl}) => {
             </Select>
         </FormControl>
         {
-            allDoctors.map((doctor) => (
+            allDoctors.map((doctor) => {
+                const name = `${doctor.firstName} ${doctor.lastName}`;
+                console.log(name);
+                return (
                 <Paper className={classes.root}>
                     <CardContent>
                         <Typography variant="h5" component="h3">
-                            Doctor Name: {doctor.firstName} {doctor.lastName}
+                            Doctor Name: {name}
                         </Typography>
                         <br/>
                         <Typography variant="body1" component="p">
@@ -141,29 +201,49 @@ const DoctorList = ({baseUrl}) => {
                         <Typography variant="body1" component="p">
                             Rating: {[...Array(+numberOfStars).keys()].map(n => {
                             return (
-                                    <StarIcon
-                                        key={`star-${n}`}
-                                        id={`star-${n}`}
-                                        className={(n <= doctor.rating)? 'star-selected': 'star-icon'}
-                                    ></StarIcon>
+                                <StarIcon
+                                    key={`star-${n}`}
+                                    id={`star-${n}`}
+                                    className={(n < doctor.rating) ? 'star-selected' : 'star-icon'}
+                                ></StarIcon>
                             );
                         })}
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <Button variant="contained" color="primary" className={classes.btn}>BOOK APPOINTMENT</Button>
-                        <Button variant="contained" className={`${classes.btn} green-btn`} >VIEW DETAILS</Button>
+                        <Button variant="contained" color="primary"
+                                className={classes.btn} onClick={() => handleOpenBookAppointmentModal(name, doctor.id)}>BOOK APPOINTMENT</Button>
+                        <Button variant="contained" className={`${classes.btn} green-btn`}
+                                onClick={() => handleOpenViewDetailsModal(doctor)}>VIEW DETAILS</Button>
                     </CardActions>
                 </Paper>
-            ))
+            )
+            })
         }
 
-        {/*<Modal
-            isOpen={bookAppointmentModalIsOpen}
+        <Modal
+            isOpen={bookAppointmentModal.isOpen}
             onRequestClose={closeBookAppointmentModal}
-            style={modalCustomStyles}
+            style={bookAppModalStyles}
             contentLabel="Book Appointment Modal"
-        > <BookAppointment /></Modal>*/}
+        > <BookAppointment baseUrl={baseUrl} accessToken={accessToken}
+                           doctorName={bookAppointmentModal.doctorName}
+                           doctorId={bookAppointmentModal.doctorId}
+                           loggedInUserId={loggedInUserId}
+                           closeModal={closeBookAppointmentModal}
+        /></Modal>
+
+        <Modal
+            isOpen={viewDetailsModal.isOpen}
+            onRequestClose={closeViewDetailsModal}
+            style={modalCustomStyles}
+            contentLabel="View Details Modal"
+        > <DoctorDetails baseUrl={baseUrl} accessToken={accessToken}
+                           doctorDetails={viewDetailsModal}
+                           doctorId={viewDetailsModal.doctorId}
+                           loggedInUserId={loggedInUserId}
+                           closeModal={closeViewDetailsModal}
+        /></Modal>
 
     </div>
 }

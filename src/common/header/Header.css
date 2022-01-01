@@ -46,11 +46,3 @@
 .MuiFormHelperText-root {
     color: red !important;
 }
-
-.hide-message {
-    display: none !important;
-}
-
-.show-message {
-    display: flex !important;
-}

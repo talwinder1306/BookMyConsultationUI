@@ -13,3 +13,22 @@ a {
   color: white;
   font-weight: normal;
 }
+
+
+.hide-message {
+  display: none !important;
+}
+
+.show-message {
+  display: flex !important;
+}
+
+.star-icon {
+  color: #acacac;
+  font-size: 1em;
+}
+
+.star-selected {
+  color: #ffc100;
+  font-size: 1em;
+}
