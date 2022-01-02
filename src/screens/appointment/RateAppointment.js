@@ -45,7 +45,7 @@ const RateAppointment = ({baseUrl, accessToken, doctorId, appointmentId, closeMo
 
     const isValidForm= () => {
         let errorFound = false;
-        if(rateAppointmentForm.rating == 0) {
+        if(rateAppointmentForm.rating === 0) {
             const err = document.getElementById('rating-error');
             err.style.display = 'block';
             errorFound = true;
@@ -82,22 +82,21 @@ const RateAppointment = ({baseUrl, accessToken, doctorId, appointmentId, closeMo
 
     /**
      * This handles the rating stars click
-     * @param e
+     * @param e - eventListener
      */
     const onRatingClick = (e) => {
         resetFormDefaults();
-        const id = e.target.id;
-        const n = id.substring(5);
-        const star = [];
+        const id = (e.target.id === '') ? e.currentTarget.id: e.target.id;
+        const sel = id.substring(5);
+        const star = [false, false, false, false, false];
         for(let i=0; i < 5; i++) {
-            star[i] = i <= n;
+            star[i] = (i <= sel);
         }
 
-        const state = rateAppointmentForm;
-        state['rating'] = Number(n)+1;
-        setRateAppointmentForm({...state});
-
         setStars(star);
+        const state = rateAppointmentForm;
+        state['rating'] = Number(sel)+1;
+        setRateAppointmentForm({...state});
     }
 
     const handleInputChange = (e) => {
@@ -126,7 +125,7 @@ const RateAppointment = ({baseUrl, accessToken, doctorId, appointmentId, closeMo
                             <StarIcon
                                 key={`star-${n}`}
                                 id={`star-${n}`}
-                                onClick={onRatingClick}
+                                onClick={(e) => onRatingClick(e)}
                                 className={stars[n] === true ? 'star-selected': 'star-icon'}
                             ></StarIcon>
                         );

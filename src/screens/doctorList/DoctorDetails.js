@@ -51,7 +51,7 @@ const DoctorDetails = ({baseUrl, doctorId, doctorDetails, accessToken, closeModa
                 <StarIcon
                     key={`star-${n}`}
                     id={`star-${n}`}
-                    className={(n <= doctorDetails.rating) ? 'star-selected' : 'star-icon'}
+                    className={(n < doctorDetails.rating) ? 'star-selected' : 'star-icon'}
                 ></StarIcon>
             );
         })}

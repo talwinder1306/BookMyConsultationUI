@@ -61,8 +61,6 @@ const Appointment = ({baseUrl, accessToken, loggedInUserId}) => {
         })
             .then(response => response.json())
             .then(response => {
-                console.log(`Appointment By User ${response}`);
-                console.log(JSON.stringify(response));
                 setAppointments([...response]);
             });
     }

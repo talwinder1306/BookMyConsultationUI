@@ -25,10 +25,10 @@ a {
 
 .star-icon {
   color: #acacac;
-  font-size: 1em;
+  font-size: 2em !important;
 }
 
 .star-selected {
   color: #ffc100;
-  font-size: 1em;
+  font-size: 2em !important;
 }

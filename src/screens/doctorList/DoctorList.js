@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import ReactDOM from "react-dom";
 import {Select, MenuItem, FormControl, InputLabel} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import './DoctorList.css';
@@ -85,7 +84,6 @@ const DoctorList = ({baseUrl, accessToken, loggedInUserId}) => {
         fetch(`${baseUrl}doctors/speciality`)
             .then(response => response.json())
             .then(response => {
-                console.log(`All Specialities ${response}`);
                 setAllSpecialities([...response]);
             });
     }
@@ -94,14 +92,11 @@ const DoctorList = ({baseUrl, accessToken, loggedInUserId}) => {
         fetch(`${baseUrl}doctors?speciality=${speciality}`)
             .then(response => response.json())
             .then(response => {
-                console.log(`Doctors By Speciality ${response}`);
-                console.log(JSON.stringify(response));
                 setAllDoctors([...response]);
             });
     }
 
     useEffect(() => {
-        console.log(bookAppModalStyles);
         fetchAllSpecialities();
         fetchDoctorsBySpeciality("");
     }, []);
@@ -112,8 +107,6 @@ const DoctorList = ({baseUrl, accessToken, loggedInUserId}) => {
     };
 
     const handleOpenBookAppointmentModal = (name, id) => {
-        console.log(name);
-        console.log(id);
         const modalState = bookAppointmentModal;
         modalState['isOpen'] = true;
         modalState['doctorName'] = name;
@@ -142,7 +135,6 @@ const DoctorList = ({baseUrl, accessToken, loggedInUserId}) => {
             'mobile': `${doctorObj.mobile}`,
             'rating': doctorObj.rating
         };
-        console.log(modalState);
         setViewDetailsModal({...modalState});
     }
 
@@ -187,7 +179,6 @@ const DoctorList = ({baseUrl, accessToken, loggedInUserId}) => {
         {
             allDoctors.map((doctor) => {
                 const name = `${doctor.firstName} ${doctor.lastName}`;
-                console.log(name);
                 return (
                 <Paper className={classes.root}>
                     <CardContent>

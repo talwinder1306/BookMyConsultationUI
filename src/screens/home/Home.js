@@ -5,6 +5,16 @@ import {Box, Tab, Tabs} from "@material-ui/core";
 import DoctorList from "../doctorList/DoctorList";
 import Appointment from "../appointment/Appointment"
 
+/**
+ * This component displays the Header component on top with DoctorList and Appointment Components in tabs
+ * @param baseUrl
+ * @param accessToken
+ * @param setAccessToken
+ * @param loggedInUserId
+ * @param setLoggedInUserId
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const Home = ({baseUrl, accessToken, setAccessToken, loggedInUserId, setLoggedInUserId}) => {
     const [value, setValue] = React.useState(0);
 

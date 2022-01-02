@@ -30,6 +30,10 @@
     margin-top: 20px !important;
 }
 
+.MuiFormHelperText-root {
+    color: red !important;
+}
+
 .floating-error {
     background: #423f3f;
     width: fit-content;
@@ -43,6 +47,4 @@
     display: none;
 }
 
-.MuiFormHelperText-root {
-    color: red !important;
-}
+

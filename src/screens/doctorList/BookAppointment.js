@@ -58,10 +58,7 @@ const BookAppointment = ({baseUrl, doctorName, doctorId, accessToken, loggedInUs
         fetch(`${baseUrl}doctors/${doctorId}/timeSlots?date=${selectedDate}`)
             .then(response => response.json())
             .then(response => {
-                console.log(`TimeSlots ${response}`);
-                console.log(JSON.stringify(response));
                 const time = response.timeSlot;
-                console.log(JSON.stringify(time));
                 setTimeSlots([...time]);
             });
     }
@@ -83,6 +80,8 @@ const BookAppointment = ({baseUrl, doctorName, doctorId, accessToken, loggedInUs
     };
 
     const handleTimeSlotChange = (event) => {
+        const err = document.getElementById('timeslot-error');
+        err.style.display = 'none';
         setSelectedTimeSlot(event.target.value);
     };
 
@@ -131,7 +130,6 @@ const BookAppointment = ({baseUrl, doctorName, doctorId, accessToken, loggedInUs
                 body: JSON.stringify(body)
             });
             if(rawResponse.ok) {
-                console.log(rawResponse);
                 alert("Appointment was booked successfully");
                 closeModal();
             } else {
